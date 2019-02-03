@@ -24,12 +24,6 @@ Moni_Con::Moni_Con(QWidget *parent) :
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(100);
-    serialPort.setPortName("/dev/ttyACM0");
-    serialPort.setBaudRate(QSerialPort::Baud9600);
-    if (!serialPort.open(QIODevice::ReadOnly)) {
-            qInfo("Cant Read");
-            QCoreApplication::quit();
-        }
 }
 
 Moni_Con::~Moni_Con()
@@ -61,21 +55,36 @@ void Moni_Con::on_flex_overflow()
 void Moni_Con::on_connect_button_clicked(bool checked)
 {
     if(checked){
-        status = true;
-        ui->statuslab->setText("Connected");
-        ui->statuslab->setStyleSheet("color:green");
+        serialPort.setPortName("/dev/ttyACM0");
+        serialPort.setBaudRate(QSerialPort::Baud9600);
+        if (!serialPort.open(QIODevice::ReadOnly)) {
+                qInfo("Cant Read");
+                QCoreApplication::quit();
+                status = false;
+                ui->statuslab->setText("Disconnected");
+                ui->statuslab->setStyleSheet("color:red");
+                checked = false;
+            }
+        else{
+            status = true;
+            ui->statuslab->setText("Connected");
+            ui->statuslab->setStyleSheet("color:green");
+        }
+
     }
     else{
+        serialPort.close();
         status = false;
         ui->statuslab->setText("Disconnected");
         ui->statuslab->setStyleSheet("color:red");
     }
-    qInfo("%d",status);
 }
 
 void Moni_Con::update(){
+    if(status){
     QByteArray readData = serialPort.readAll();
     qDebug(readData);
+    }
 
 }
 
