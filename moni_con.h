@@ -18,6 +18,7 @@ public:
     bool status;
     QSerialPort serialPort;
     QString serialPortName;
+    QByteArray line;
 
 private slots:
 

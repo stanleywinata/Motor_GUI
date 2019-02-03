@@ -7,6 +7,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QCoreApplication>
+#include <string>
+#include <sstream>
 
 Moni_Con::Moni_Con(QWidget *parent) :
     QMainWindow(parent),
@@ -21,9 +23,6 @@ Moni_Con::Moni_Con(QWidget *parent) :
     status = false;
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1.04);
 }
 
 Moni_Con::~Moni_Con()
@@ -57,7 +56,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
     if(checked){
         serialPort.setPortName("/dev/ttyACM0");
         serialPort.setBaudRate(QSerialPort::Baud9600);
-        if (!serialPort.open(QIODevice::ReadOnly)) {
+        if (!serialPort.open(QIODevice::ReadWrite)) {
                 qInfo("Cant Read");
                 QCoreApplication::quit();
                 status = false;
@@ -69,6 +68,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
             status = true;
             ui->statuslab->setText("Connected");
             ui->statuslab->setStyleSheet("color:green");
+            connect(&serialPort, SIGNAL(readyRead()), this, SLOT(update()));
         }
 
     }
@@ -82,10 +82,16 @@ void Moni_Con::on_connect_button_clicked(bool checked)
 
 void Moni_Con::update(){
     if(status){
+        serialPort.waitForReadyRead(500);
         QByteArray readData = serialPort.readLine();
-//        while (serialPort.waitForReadyRead(5000))
-//               readData.append(serialPort.readAll());
-    qDebug(readData+"eol");
-        }
+        qDebug(readData);
+        qDebug("x");
+// Use start with I(nfrared),S(onar),F(lex), T(emperature) then the number Since max bytes might go through 7 digits"//
+        //Writing to Serial
+//        float number = 180;
+//        QByteArray q_b;
+//        q_b.setNum(number);
+//        QByteArray response = "r"+q_b;
+//        serialPort.write(response);
     }
-
+}
