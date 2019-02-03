@@ -1,5 +1,7 @@
 #include "moni_con.h"
 #include <QApplication>
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 int main(int argc, char *argv[])
 {
