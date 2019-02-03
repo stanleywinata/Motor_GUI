@@ -23,7 +23,7 @@ Moni_Con::Moni_Con(QWidget *parent) :
     ui->statuslab->setStyleSheet("color:red");
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(100);
+    timer->start(1.04);
 }
 
 Moni_Con::~Moni_Con()
@@ -82,9 +82,10 @@ void Moni_Con::on_connect_button_clicked(bool checked)
 
 void Moni_Con::update(){
     if(status){
-    QByteArray readData = serialPort.readAll();
-    qDebug(readData);
+        QByteArray readData = serialPort.readLine();
+//        while (serialPort.waitForReadyRead(5000))
+//               readData.append(serialPort.readAll());
+    qDebug(readData+"eol");
+        }
     }
-
-}
 

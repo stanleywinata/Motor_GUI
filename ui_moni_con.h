@@ -37,6 +37,10 @@ public:
     QPushButton *connect_button;
     QLabel *label_2;
     QLabel *statuslab;
+    QLabel *label_3;
+    QLabel *label_4;
+    QLabel *label_5;
+    QLabel *label_6;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -50,16 +54,16 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         sonar = new QLCDNumber(centralWidget);
         sonar->setObjectName(QStringLiteral("sonar"));
-        sonar->setGeometry(QRect(30, 70, 64, 23));
+        sonar->setGeometry(QRect(120, 70, 91, 21));
         temperature = new QLCDNumber(centralWidget);
         temperature->setObjectName(QStringLiteral("temperature"));
-        temperature->setGeometry(QRect(140, 70, 64, 23));
+        temperature->setGeometry(QRect(20, 70, 91, 21));
         ranger = new QLCDNumber(centralWidget);
         ranger->setObjectName(QStringLiteral("ranger"));
-        ranger->setGeometry(QRect(30, 120, 64, 23));
+        ranger->setGeometry(QRect(20, 120, 91, 21));
         flex = new QLCDNumber(centralWidget);
         flex->setObjectName(QStringLiteral("flex"));
-        flex->setGeometry(QRect(140, 120, 64, 23));
+        flex->setGeometry(QRect(120, 120, 91, 21));
         label = new QLabel(centralWidget);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(100, 10, 251, 21));
@@ -77,6 +81,18 @@ public:
         statuslab = new QLabel(centralWidget);
         statuslab->setObjectName(QStringLiteral("statuslab"));
         statuslab->setGeometry(QRect(350, 60, 91, 16));
+        label_3 = new QLabel(centralWidget);
+        label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setGeometry(QRect(20, 100, 91, 16));
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setGeometry(QRect(130, 50, 71, 21));
+        label_5 = new QLabel(centralWidget);
+        label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setGeometry(QRect(40, 50, 67, 17));
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setGeometry(QRect(130, 100, 67, 17));
         Moni_Con->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(Moni_Con);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -101,6 +117,10 @@ public:
         connect_button->setText(QApplication::translate("Moni_Con", "Connect", 0));
         label_2->setText(QApplication::translate("Moni_Con", "Serial Status", 0));
         statuslab->setText(QApplication::translate("Moni_Con", "Disconnected", 0));
+        label_3->setText(QApplication::translate("Moni_Con", "Infrafred(cm)", 0));
+        label_4->setText(QApplication::translate("Moni_Con", "Sonar(cm)", 0));
+        label_5->setText(QApplication::translate("Moni_Con", "Temp(C)", 0));
+        label_6->setText(QApplication::translate("Moni_Con", "Flex(Nm)", 0));
     } // retranslateUi
 
 };

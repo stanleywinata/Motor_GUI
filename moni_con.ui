@@ -17,40 +17,40 @@
    <widget class="QLCDNumber" name="sonar">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>120</x>
       <y>70</y>
-      <width>64</width>
-      <height>23</height>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="temperature">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>20</x>
       <y>70</y>
-      <width>64</width>
-      <height>23</height>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="ranger">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>20</x>
       <y>120</y>
-      <width>64</width>
-      <height>23</height>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="flex">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>120</x>
       <y>120</y>
-      <width>64</width>
-      <height>23</height>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
    </widget>
@@ -113,6 +113,58 @@
     </property>
     <property name="text">
      <string>Disconnected</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Infrafred(cm)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>50</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sonar(cm)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>50</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Temp(C)</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>100</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Flex(Nm)</string>
     </property>
    </widget>
   </widget>
