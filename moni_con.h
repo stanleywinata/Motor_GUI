@@ -16,6 +16,8 @@ public:
     explicit Moni_Con(QWidget *parent = 0);
     ~Moni_Con();
     bool status;
+    QSerialPort serialPort;
+    QString serialPortName;
 
 private slots:
 
@@ -28,6 +30,8 @@ private slots:
     void on_flex_overflow();
 
     void on_connect_button_clicked(bool checked);
+
+    void update();
 
 
 private:

@@ -3,6 +3,10 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <iostream>
+#include <QTimer>
+#include <QStringList>
+#include <QTextStream>
+#include <QCoreApplication>
 
 Moni_Con::Moni_Con(QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +21,15 @@ Moni_Con::Moni_Con(QWidget *parent) :
     status = false;
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(100);
+    serialPort.setPortName("/dev/ttyACM0");
+    serialPort.setBaudRate(QSerialPort::Baud9600);
+    if (!serialPort.open(QIODevice::ReadOnly)) {
+            qInfo("Cant Read");
+            QCoreApplication::quit();
+        }
 }
 
 Moni_Con::~Moni_Con()
@@ -49,7 +62,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
 {
     if(checked){
         status = true;
-        ui->statuslab->setPalette(Qt::green);
+        ui->statuslab->setText("Connected");
         ui->statuslab->setStyleSheet("color:green");
     }
     else{
@@ -57,6 +70,12 @@ void Moni_Con::on_connect_button_clicked(bool checked)
         ui->statuslab->setText("Disconnected");
         ui->statuslab->setStyleSheet("color:red");
     }
-    std::cout<<status;
+    qInfo("%d",status);
+}
+
+void Moni_Con::update(){
+    QByteArray readData = serialPort.readAll();
+    qDebug(readData);
+
 }
 
