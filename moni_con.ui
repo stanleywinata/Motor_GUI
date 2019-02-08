@@ -232,7 +232,7 @@
      <string>DC Velocity</string>
     </property>
    </widget>
-   <widget class="QDial" name="dial_2">
+   <widget class="QDial" name="ki">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -242,7 +242,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDial" name="dial_3">
+   <widget class="QDial" name="kd">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -304,7 +304,7 @@
      <string>Kd</string>
     </property>
    </widget>
-   <widget class="QDial" name="dial_4">
+   <widget class="QDial" name="kp">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -314,12 +314,12 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="dclabel">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>70</x>
       <y>190</y>
-      <width>91</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>

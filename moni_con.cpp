@@ -71,22 +71,30 @@ void Moni_Con::on_connect_button_clicked(bool checked)
 }
 
 void Moni_Con::lcd_update(QByteArray data){
-    QByteArray numb = data.mid(3);
-    QByteArray code = data.left(3);
+    QByteArray numb = data.mid(2);
+    QByteArray code = data.left(2);
     QString cod = QString::fromUtf8(code);
     QString num = QString::fromUtf8(numb);
 
-    if(cod == "USO"){
+    if(cod == "US"){
         ui->sonar->display(num);
     }
-    else if(cod == "IRE"){
+    else if(cod == "IR"){
         ui->ranger->display(num);
     }
-    else if(cod == "TPE"){
+    else if(cod == "TP"){
         ui->temperature->display(num);
     }
-    else if(cod == "FLE"){
+    else if(cod == "FL"){
         ui->flex->display(num);
+    }
+    else if(cod == "DA"){
+        ui->read_dc->display(num);
+        ui->dclabel->setText("DC Motor(o)");
+    }
+    else if(cod == "DS"){
+        ui->read_dc->display(num);
+        ui->dclabel->setText("DC Motor(RPM)");
     }
 
 }
@@ -106,7 +114,7 @@ void Moni_Con::on_cmd_servo_clicked()
 {
     if(status){
         QByteArray code;
-        code = "SER";
+        code = "SE";
         serialPort.waitForBytesWritten(500);
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("Servo Controller");
@@ -123,7 +131,7 @@ void Moni_Con::on_cmd_step_clicked()
 {
     if(status){
         QByteArray code;
-        code = "STE";
+        code = "ST";
         serialPort.waitForBytesWritten(500);
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("Stepper Controller");
@@ -140,11 +148,12 @@ void Moni_Con::on_cmd_dcpos_clicked()
 {
     if(status){
         QByteArray code;
-        code = "DCA";
+        code = "DA";
         serialPort.waitForBytesWritten(500);
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("DC Pos Controller");
         ui->cmd_mode->setStyleSheet("color:green");
+        dc_mod = true;
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -157,11 +166,12 @@ void Moni_Con::on_cmd_dcvel_clicked()
 {
     if(status){
         QByteArray code;
-        code = "DCS";
+        code = "DS";
         serialPort.waitForBytesWritten(500);
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("DC Vel Controller");
         ui->cmd_mode->setStyleSheet("color:green");
+        dc_mod = false;
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -174,10 +184,64 @@ void Moni_Con::on_cmd_off_clicked()
 {
     if(status){
         QByteArray code;
-        code = "KIL";
+        code = "KI";
         serialPort.waitForBytesWritten(500);
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
     }
+}
+
+
+
+
+void Moni_Con::on_kp_sliderMoved(int position)
+{
+    QByteArray code;
+    QByteArray num;
+    float max = 50;
+    float min = 0;
+    if(dc_mod){
+        code = "KPP" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    else{
+        code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    qDebug(code);
+//    serialPort.waitForBytesWritten(500);
+//    serialPort.write(code+"\n");
+}
+
+void Moni_Con::on_ki_sliderMoved(int position)
+{
+    QByteArray code;
+    QByteArray num;
+    float max = 50;
+    float min = 0;
+    if(dc_mod){
+        code = "KIP" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    else{
+        code = "KIV" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    qDebug(code);
+//    serialPort.waitForBytesWritten(500);
+//    serialPort.write(code+"\n");
+}
+
+void Moni_Con::on_kd_sliderMoved(int position)
+{
+    QByteArray code;
+    QByteArray num;
+    float max = 50;
+    float min = 0;
+    if(dc_mod){
+        code = "KPP" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    else{
+        code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
+    }
+    qDebug(code);
+//    serialPort.waitForBytesWritten(500);
+//    serialPort.write(code+"\n");
 }

@@ -19,7 +19,7 @@ public:
     QSerialPort serialPort;
     QString serialPortName;
     QByteArray line;
-    QString modus;
+    bool dc_mod; //0 == Speed, 1 == Position
 
 private slots:
 
@@ -41,6 +41,12 @@ private slots:
     void on_cmd_dcvel_clicked();
 
     void on_cmd_off_clicked();
+
+    void on_kp_sliderMoved(int position);
+
+    void on_ki_sliderMoved(int position);
+
+    void on_kd_sliderMoved(int position);
 
 private:
     Ui::Moni_Con *ui;
