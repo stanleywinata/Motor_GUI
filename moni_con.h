@@ -19,21 +19,28 @@ public:
     QSerialPort serialPort;
     QString serialPortName;
     QByteArray line;
+    QString modus;
 
 private slots:
 
-    void on_sonar_overflow();
-
-    void on_temperature_overflow();
-
-    void on_ranger_overflow();
-
-    void on_flex_overflow();
 
     void on_connect_button_clicked(bool checked);
 
     void update();
 
+
+    void lcd_update(QByteArray data);
+
+
+    void on_cmd_servo_clicked();
+
+    void on_cmd_step_clicked();
+
+    void on_cmd_dcpos_clicked();
+
+    void on_cmd_dcvel_clicked();
+
+    void on_cmd_off_clicked();
 
 private:
     Ui::Moni_Con *ui;

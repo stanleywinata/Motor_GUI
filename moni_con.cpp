@@ -20,34 +20,19 @@ Moni_Con::Moni_Con(QWidget *parent) :
     ui->flex->setPalette(Qt::green);
     ui->temperature->setPalette(Qt::green);
     ui->sonar->setPalette(Qt::green);
+    ui->read_dc->setPalette(Qt::green);
     status = false;
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
+    ui->cmd_mode->setStyleSheet("color:yellow");
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, SIGNAL(timeout()), this, SLOT(send()));
+//    timer->start(1.04);
 }
 
 Moni_Con::~Moni_Con()
 {
     delete ui;
-}
-
-void Moni_Con::on_sonar_overflow()
-{
-
-}
-
-void Moni_Con::on_temperature_overflow()
-{
-
-}
-
-void Moni_Con::on_ranger_overflow()
-{
-
-}
-
-void Moni_Con::on_flex_overflow()
-{
-
 }
 
 
@@ -56,6 +41,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
     if(checked){
         serialPort.setPortName("/dev/ttyACM0");
         serialPort.setBaudRate(QSerialPort::Baud9600);
+        qDebug("connecting");
         if (!serialPort.open(QIODevice::ReadWrite)) {
                 qInfo("Cant Read");
                 QCoreApplication::quit();
@@ -69,6 +55,8 @@ void Moni_Con::on_connect_button_clicked(bool checked)
             ui->statuslab->setText("Connected");
             ui->statuslab->setStyleSheet("color:green");
             connect(&serialPort, SIGNAL(readyRead()), this, SLOT(update()));
+            qDebug("connected");
+            serialPort.write("SER");
         }
 
     }
@@ -77,21 +65,119 @@ void Moni_Con::on_connect_button_clicked(bool checked)
         status = false;
         ui->statuslab->setText("Disconnected");
         ui->statuslab->setStyleSheet("color:red");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
     }
+}
+
+void Moni_Con::lcd_update(QByteArray data){
+    QByteArray numb = data.mid(3);
+    QByteArray code = data.left(3);
+    QString cod = QString::fromUtf8(code);
+    QString num = QString::fromUtf8(numb);
+
+    if(cod == "USO"){
+        ui->sonar->display(num);
+    }
+    else if(cod == "IRE"){
+        ui->ranger->display(num);
+    }
+    else if(cod == "TPE"){
+        ui->temperature->display(num);
+    }
+    else if(cod == "FLE"){
+        ui->flex->display(num);
+    }
+
 }
 
 void Moni_Con::update(){
     if(status){
+// Reading Data from Sensors
         serialPort.waitForReadyRead(500);
         QByteArray readData = serialPort.readLine();
-        qDebug(readData);
-        qDebug("x");
-// Use start with I(nfrared),S(onar),F(lex), T(emperature) then the number Since max bytes might go through 7 digits"//
-        //Writing to Serial
-//        float number = 180;
-//        QByteArray q_b;
-//        q_b.setNum(number);
-//        QByteArray response = "r"+q_b;
-//        serialPort.write(response);
+        lcd_update(readData);
+    }
+}
+
+
+
+void Moni_Con::on_cmd_servo_clicked()
+{
+    if(status){
+        QByteArray code;
+        code = "SER";
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("Servo Controller");
+        ui->cmd_mode->setStyleSheet("color:green");
+    }
+    else{
+        qWarning("System Not Connected, Please Try to connect");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
+    }
+}
+
+void Moni_Con::on_cmd_step_clicked()
+{
+    if(status){
+        QByteArray code;
+        code = "STE";
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("Stepper Controller");
+        ui->cmd_mode->setStyleSheet("color:green");
+    }
+    else{
+        qWarning("System Not Connected, Please Try to connect");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
+    }
+}
+
+void Moni_Con::on_cmd_dcpos_clicked()
+{
+    if(status){
+        QByteArray code;
+        code = "DCA";
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("DC Pos Controller");
+        ui->cmd_mode->setStyleSheet("color:green");
+    }
+    else{
+        qWarning("System Not Connected, Please Try to connect");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
+    }
+}
+
+void Moni_Con::on_cmd_dcvel_clicked()
+{
+    if(status){
+        QByteArray code;
+        code = "DCS";
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("DC Vel Controller");
+        ui->cmd_mode->setStyleSheet("color:green");
+    }
+    else{
+        qWarning("System Not Connected, Please Try to connect");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
+    }
+}
+
+void Moni_Con::on_cmd_off_clicked()
+{
+    if(status){
+        QByteArray code;
+        code = "KIL";
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
     }
 }
