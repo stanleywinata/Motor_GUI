@@ -25,9 +25,6 @@ Moni_Con::Moni_Con(QWidget *parent) :
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
     ui->cmd_mode->setStyleSheet("color:yellow");
-//    QTimer *timer = new QTimer(this);
-//    connect(timer, SIGNAL(timeout()), this, SLOT(send()));
-//    timer->start(1.04);
 }
 
 Moni_Con::~Moni_Con()
@@ -40,7 +37,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
 {
     if(checked){
         serialPort.setPortName("/dev/ttyACM0");
-        serialPort.setBaudRate(QSerialPort::Baud9600);
+        serialPort.setBaudRate(QSerialPort::Baud115200);
         qDebug("connecting");
         if (!serialPort.open(QIODevice::ReadWrite)) {
                 qInfo("Cant Read");
@@ -84,9 +81,11 @@ void Moni_Con::lcd_update(QByteArray data){
     }
     else if(cod == "TP"){
         ui->temperature->display(num);
+//        qDebug(num.toLatin1());
     }
     else if(cod == "FL"){
         ui->flex->display(num);
+//        qDebug("hi");
     }
     else if(cod == "DA"){
         ui->read_dc->display(num);
@@ -96,7 +95,7 @@ void Moni_Con::lcd_update(QByteArray data){
         ui->read_dc->display(num);
         ui->dclabel->setText("DC Motor(RPM)");
     }
-
+    qDebug(data);
 }
 
 void Moni_Con::update(){
@@ -105,6 +104,7 @@ void Moni_Con::update(){
         serialPort.waitForReadyRead(500);
         QByteArray readData = serialPort.readLine();
         lcd_update(readData);
+        serialPort.clear();
     }
 }
 

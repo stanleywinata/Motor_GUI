@@ -108,7 +108,7 @@ public:
         label_4->setGeometry(QRect(130, 90, 71, 21));
         label_5 = new QLabel(centralWidget);
         label_5->setObjectName(QStringLiteral("label_5"));
-        label_5->setGeometry(QRect(40, 90, 67, 17));
+        label_5->setGeometry(QRect(20, 90, 111, 17));
         label_6 = new QLabel(centralWidget);
         label_6->setObjectName(QStringLiteral("label_6"));
         label_6->setGeometry(QRect(130, 140, 67, 17));
@@ -192,7 +192,7 @@ public:
         statuslab->setText(QApplication::translate("Moni_Con", "Disconnected", 0));
         label_3->setText(QApplication::translate("Moni_Con", "Infrafred(cm)", 0));
         label_4->setText(QApplication::translate("Moni_Con", "Sonar(cm)", 0));
-        label_5->setText(QApplication::translate("Moni_Con", "Temp(C)", 0));
+        label_5->setText(QApplication::translate("Moni_Con", "Potentio(mV)", 0));
         label_6->setText(QApplication::translate("Moni_Con", "Flex(Nm)", 0));
         label_7->setText(QApplication::translate("Moni_Con", "Command", 0));
         cmd_servo->setText(QApplication::translate("Moni_Con", "Servo", 0));

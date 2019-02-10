@@ -144,14 +144,14 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>90</y>
-      <width>67</width>
+      <width>111</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Temp(C)</string>
+     <string>Potentio(mV)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
