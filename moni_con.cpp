@@ -16,11 +16,11 @@ Moni_Con::Moni_Con(QWidget *parent) :
 {
     ui->setupUi(this);
     QSerialPort serial;
-    ui->ranger->setPalette(Qt::green);
-    ui->flex->setPalette(Qt::green);
-    ui->temperature->setPalette(Qt::green);
-    ui->sonar->setPalette(Qt::green);
-    ui->read_dc->setPalette(Qt::green);
+    ui->ranger->setPalette(Qt::red);
+    ui->flex->setPalette(Qt::red);
+    ui->temperature->setPalette(Qt::red);
+    ui->sonar->setPalette(Qt::red);
+    ui->read_dc->setPalette(Qt::red);
     status = false;
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
@@ -29,7 +29,7 @@ Moni_Con::Moni_Con(QWidget *parent) :
     flag_ir = false;
     flag_us = false;
     flag_fl = false;
-
+    mode = 4;
 }
 
 Moni_Con::~Moni_Con()
@@ -45,8 +45,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
         serialPort.setBaudRate(QSerialPort::Baud115200);
         qDebug("connecting");
         if (!serialPort.open(QIODevice::ReadWrite)) {
-                qInfo("Cant Read");
-                QCoreApplication::quit();
+                qInfo("Cant Read, try to connect again");
                 status = false;
                 ui->statuslab->setText("Disconnected");
                 ui->statuslab->setStyleSheet("color:red");
@@ -57,7 +56,7 @@ void Moni_Con::on_connect_button_clicked(bool checked)
             ui->statuslab->setText("Connected");
             ui->statuslab->setStyleSheet("color:green");
             connect(&serialPort, SIGNAL(readyRead()), this, SLOT(update()));
-            qDebug("connected");
+            qDebug("connection succesful !");
             serialPort.write("SER");
         }
 
@@ -80,21 +79,15 @@ void Moni_Con::lcd_update(QByteArray data){
 
     if(cod == "US"){
         ui->sonar->display(num);
-        flag_us = true;
     }
     else if(cod == "IR"){
         ui->ranger->display(num);
-        flag_ir = true;
     }
     else if(cod == "TP"){
         ui->temperature->display(num.toInt());
-        flag_tp = true;
-        qDebug(num.toLatin1());
     }
     else if(cod == "FL"){
         ui->flex->display(num);
-        flag_fl = true;
-//        qDebug("hi");
     }
     else if(cod == "DA"){
         ui->read_dc->display(num);
@@ -112,16 +105,9 @@ void Moni_Con::update(){
         serialPort.waitForReadyRead(500);
         QByteArray readData = serialPort.readLine();
         lcd_update(readData);
-        if(flag_fl && flag_ir && flag_tp && flag_us){
-            serialPort.clear();
-            flag_tp = false;
-            flag_ir = false;
-            flag_us = false;
-            flag_fl = false;
-        }
+        serialPort.clear();
     }
 }
-
 
 
 void Moni_Con::on_cmd_servo_clicked()
@@ -134,6 +120,8 @@ void Moni_Con::on_cmd_servo_clicked()
         ui->cmd_mode->setText("Servo Controller");
         ui->cmd_mode->setStyleSheet("color:green");
         ui->read_dc->display('0');
+        mode = 0;
+        color_update(mode);
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -152,6 +140,8 @@ void Moni_Con::on_cmd_step_clicked()
         ui->cmd_mode->setText("Stepper Controller");
         ui->cmd_mode->setStyleSheet("color:green");
         ui->read_dc->display('0');
+        mode = 1;
+        color_update(mode);
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -170,6 +160,8 @@ void Moni_Con::on_cmd_dcpos_clicked()
         ui->cmd_mode->setText("DC Pos Controller");
         ui->cmd_mode->setStyleSheet("color:green");
         dc_mod = true;
+        mode = 2;
+        color_update(mode);
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -188,6 +180,8 @@ void Moni_Con::on_cmd_dcvel_clicked()
         ui->cmd_mode->setText("DC Vel Controller");
         ui->cmd_mode->setStyleSheet("color:green");
         dc_mod = false;
+        mode = 3;
+        color_update(mode);
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -206,6 +200,8 @@ void Moni_Con::on_cmd_off_clicked()
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
         ui->read_dc->display('0');
+        mode = 4;
+        color_update(mode);
     }
 }
 
@@ -256,4 +252,27 @@ void Moni_Con::on_kd_sliderMoved(int position)
         code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
     }
     qDebug(code);
+}
+
+void Moni_Con::color_update(int modus){
+    ui->ranger->setPalette(Qt::red);
+    ui->sonar->setPalette(Qt::red);
+    ui->flex->setPalette(Qt::red);
+    ui->temperature->setPalette(Qt::red);
+    ui->read_dc->setPalette(Qt::red);
+    if(modus == 0){
+        ui->sonar->setPalette(Qt::green);
+    }
+    else if(modus == 1 ){
+        ui->ranger->setPalette(Qt::green);
+    }
+    else if(modus == 2 ){
+        ui->temperature->setPalette(Qt::green);
+        ui->read_dc->setPalette(Qt::green);
+    }
+    else if(modus == 3 ){
+        ui->flex->setPalette(Qt::green);
+        ui->read_dc->setPalette(Qt::green);
+    }
+
 }

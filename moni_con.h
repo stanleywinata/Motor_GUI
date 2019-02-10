@@ -24,6 +24,8 @@ public:
     bool flag_us;
     bool flag_tp;
     bool flag_ir;
+    bool flag_dc;
+    int mode; //0=servo, 1=stepper, 2=dcpos, 3=dcvel, 4=none
 
 private slots:
 
@@ -51,6 +53,8 @@ private slots:
     void on_ki_sliderMoved(int position);
 
     void on_kd_sliderMoved(int position);
+
+    void color_update(int modus);
 
 private:
     Ui::Moni_Con *ui;
