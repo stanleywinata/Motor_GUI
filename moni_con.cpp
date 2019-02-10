@@ -25,6 +25,11 @@ Moni_Con::Moni_Con(QWidget *parent) :
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
     ui->cmd_mode->setStyleSheet("color:yellow");
+    flag_tp = false;
+    flag_ir = false;
+    flag_us = false;
+    flag_fl = false;
+
 }
 
 Moni_Con::~Moni_Con()
@@ -75,16 +80,20 @@ void Moni_Con::lcd_update(QByteArray data){
 
     if(cod == "US"){
         ui->sonar->display(num);
+        flag_us = true;
     }
     else if(cod == "IR"){
         ui->ranger->display(num);
+        flag_ir = true;
     }
     else if(cod == "TP"){
-        ui->temperature->display(num);
-//        qDebug(num.toLatin1());
+        ui->temperature->display(num.toInt());
+        flag_tp = true;
+        qDebug(num.toLatin1());
     }
     else if(cod == "FL"){
         ui->flex->display(num);
+        flag_fl = true;
 //        qDebug("hi");
     }
     else if(cod == "DA"){
@@ -95,7 +104,6 @@ void Moni_Con::lcd_update(QByteArray data){
         ui->read_dc->display(num);
         ui->dclabel->setText("DC Motor(RPM)");
     }
-    qDebug(data);
 }
 
 void Moni_Con::update(){
@@ -104,7 +112,13 @@ void Moni_Con::update(){
         serialPort.waitForReadyRead(500);
         QByteArray readData = serialPort.readLine();
         lcd_update(readData);
-        serialPort.clear();
+        if(flag_fl && flag_ir && flag_tp && flag_us){
+            serialPort.clear();
+            flag_tp = false;
+            flag_ir = false;
+            flag_us = false;
+            flag_fl = false;
+        }
     }
 }
 
@@ -119,6 +133,7 @@ void Moni_Con::on_cmd_servo_clicked()
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("Servo Controller");
         ui->cmd_mode->setStyleSheet("color:green");
+        ui->read_dc->display('0');
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -136,6 +151,7 @@ void Moni_Con::on_cmd_step_clicked()
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("Stepper Controller");
         ui->cmd_mode->setStyleSheet("color:green");
+        ui->read_dc->display('0');
     }
     else{
         qWarning("System Not Connected, Please Try to connect");
@@ -189,6 +205,7 @@ void Moni_Con::on_cmd_off_clicked()
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
+        ui->read_dc->display('0');
     }
 }
 
@@ -208,8 +225,6 @@ void Moni_Con::on_kp_sliderMoved(int position)
         code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
     }
     qDebug(code);
-//    serialPort.waitForBytesWritten(500);
-//    serialPort.write(code+"\n");
 }
 
 void Moni_Con::on_ki_sliderMoved(int position)
@@ -225,8 +240,7 @@ void Moni_Con::on_ki_sliderMoved(int position)
         code = "KIV" + num.setNum(((100-position)*min+(position)*max)/100);
     }
     qDebug(code);
-//    serialPort.waitForBytesWritten(500);
-//    serialPort.write(code+"\n");
+
 }
 
 void Moni_Con::on_kd_sliderMoved(int position)
@@ -242,6 +256,4 @@ void Moni_Con::on_kd_sliderMoved(int position)
         code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
     }
     qDebug(code);
-//    serialPort.waitForBytesWritten(500);
-//    serialPort.write(code+"\n");
 }

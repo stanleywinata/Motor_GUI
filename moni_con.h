@@ -20,6 +20,10 @@ public:
     QString serialPortName;
     QByteArray line;
     bool dc_mod; //0 == Speed, 1 == Position
+    bool flag_fl;
+    bool flag_us;
+    bool flag_tp;
+    bool flag_ir;
 
 private slots:
 
