@@ -16,15 +16,17 @@ Moni_Con::Moni_Con(QWidget *parent) :
 {
     ui->setupUi(this);
     QSerialPort serial;
-    ui->ranger->setPalette(Qt::red);
-    ui->flex->setPalette(Qt::red);
-    ui->temperature->setPalette(Qt::red);
-    ui->sonar->setPalette(Qt::red);
-    ui->read_dc->setPalette(Qt::red);
+    ui->ranger->setPalette(Qt::yellow);
+    ui->flex->setPalette(Qt::yellow);
+    ui->temperature->setPalette(Qt::yellow);
+    ui->sonar->setPalette(Qt::yellow);
+    ui->read_dc->setPalette(Qt::yellow);
+    ui->dc_set_lcd->setPalette(Qt::yellow);
     status = false;
     ui->connect_button->setCheckable(true);
     ui->statuslab->setStyleSheet("color:red");
     ui->cmd_mode->setStyleSheet("color:yellow");
+    ui->tabWidget->setUsesScrollButtons(false);
     flag_tp = false;
     flag_ir = false;
     flag_us = false;
@@ -56,8 +58,8 @@ void Moni_Con::on_connect_button_clicked(bool checked)
             ui->statuslab->setText("Connected");
             ui->statuslab->setStyleSheet("color:green");
             connect(&serialPort, SIGNAL(readyRead()), this, SLOT(update()));
+            ui->connect_button->setText("Disconnect");
             qDebug("connection succesful !");
-            serialPort.write("SER");
         }
 
     }
@@ -68,6 +70,8 @@ void Moni_Con::on_connect_button_clicked(bool checked)
         ui->statuslab->setStyleSheet("color:red");
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
+        ui->connect_button->setText("Connect");
+        qDebug("Connection Closed !");
     }
 }
 
@@ -76,7 +80,7 @@ void Moni_Con::lcd_update(QByteArray data){
     QByteArray code = data.left(2);
     QString cod = QString::fromUtf8(code);
     QString num = QString::fromUtf8(numb);
-
+    qDebug(data);
     if(cod == "US"){
         ui->sonar->display(num);
     }
@@ -91,11 +95,9 @@ void Moni_Con::lcd_update(QByteArray data){
     }
     else if(cod == "DA"){
         ui->read_dc->display(num);
-        ui->dclabel->setText("DC Motor(o)");
     }
     else if(cod == "DS"){
         ui->read_dc->display(num);
-        ui->dclabel->setText("DC Motor(RPM)");
     }
 }
 
@@ -190,6 +192,31 @@ void Moni_Con::on_cmd_dcvel_clicked()
     }
 }
 
+void Moni_Con::on_cmd_dcvinput_clicked()
+{
+    if(true){
+//        QByteArray numb;
+//        numb.setNum(dc_manual_speed);
+//        QByteArray code = "X" + numb;
+        QByteArray code;
+        code.setNum(dc_manual_speed);
+        qDebug(code);
+        serialPort.waitForBytesWritten(500);
+        serialPort.write(code+"\n");
+        ui->cmd_mode->setText("DC Manual Input");
+        ui->cmd_mode->setStyleSheet("color:green");
+        mode = 4;
+        color_update(mode);
+        ui->dc_set_lcd->display(dc_manual_speed);
+    }
+    else{
+        qWarning("System Not Connected, Please Try to connect");
+        ui->cmd_mode->setText("None");
+        ui->cmd_mode->setStyleSheet("color:yellow");
+    }
+
+}
+
 void Moni_Con::on_cmd_off_clicked()
 {
     if(status){
@@ -200,66 +227,18 @@ void Moni_Con::on_cmd_off_clicked()
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
         ui->read_dc->display('0');
-        mode = 4;
+        mode = 5;
         color_update(mode);
     }
 }
 
-
-
-
-void Moni_Con::on_kp_sliderMoved(int position)
-{
-    QByteArray code;
-    QByteArray num;
-    float max = 50;
-    float min = 0;
-    if(dc_mod){
-        code = "KPP" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    else{
-        code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    qDebug(code);
-}
-
-void Moni_Con::on_ki_sliderMoved(int position)
-{
-    QByteArray code;
-    QByteArray num;
-    float max = 50;
-    float min = 0;
-    if(dc_mod){
-        code = "KIP" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    else{
-        code = "KIV" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    qDebug(code);
-
-}
-
-void Moni_Con::on_kd_sliderMoved(int position)
-{
-    QByteArray code;
-    QByteArray num;
-    float max = 50;
-    float min = 0;
-    if(dc_mod){
-        code = "KPP" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    else{
-        code = "KPV" + num.setNum(((100-position)*min+(position)*max)/100);
-    }
-    qDebug(code);
-}
-
 void Moni_Con::color_update(int modus){
-    ui->ranger->setPalette(Qt::red);
-    ui->sonar->setPalette(Qt::red);
-    ui->flex->setPalette(Qt::red);
-    ui->temperature->setPalette(Qt::red);
-    ui->read_dc->setPalette(Qt::red);
+    ui->ranger->setPalette(Qt::yellow);
+    ui->sonar->setPalette(Qt::yellow);
+    ui->flex->setPalette(Qt::yellow);
+    ui->temperature->setPalette(Qt::yellow);
+    ui->read_dc->setPalette(Qt::yellow);
+    ui->dc_set_lcd->setPalette(Qt::yellow);
     if(modus == 0){
         ui->sonar->setPalette(Qt::green);
     }
@@ -268,11 +247,19 @@ void Moni_Con::color_update(int modus){
     }
     else if(modus == 2 ){
         ui->temperature->setPalette(Qt::green);
-        ui->read_dc->setPalette(Qt::green);
     }
     else if(modus == 3 ){
         ui->flex->setPalette(Qt::green);
         ui->read_dc->setPalette(Qt::green);
     }
+    else if(modus == 4){
+        ui->read_dc->setPalette(Qt::green);
+        ui->dc_set_lcd->setPalette(Qt::green);
+    }
 
+}
+
+void Moni_Con::on_dial_2_valueChanged(int value)
+{
+    dc_manual_speed = value;
 }

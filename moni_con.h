@@ -26,6 +26,7 @@ public:
     bool flag_ir;
     bool flag_dc;
     int mode; //0=servo, 1=stepper, 2=dcpos, 3=dcvel, 4=none
+    int dc_manual_speed;
 
 private slots:
 
@@ -48,13 +49,12 @@ private slots:
 
     void on_cmd_off_clicked();
 
-    void on_kp_sliderMoved(int position);
-
-    void on_ki_sliderMoved(int position);
-
-    void on_kd_sliderMoved(int position);
-
     void color_update(int modus);
+
+    void on_cmd_dcvinput_clicked();
+
+
+    void on_dial_2_valueChanged(int value);
 
 private:
     Ui::Moni_Con *ui;
