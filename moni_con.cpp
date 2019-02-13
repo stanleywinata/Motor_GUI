@@ -226,7 +226,8 @@ void Moni_Con::on_cmd_off_clicked()
         serialPort.write(code+"\n");
         ui->cmd_mode->setText("None");
         ui->cmd_mode->setStyleSheet("color:yellow");
-        ui->read_dc->display('0');
+        ui->read_dc->display(0);
+        ui->dc_set_lcd->display(0);
         mode = 5;
         color_update(mode);
     }
